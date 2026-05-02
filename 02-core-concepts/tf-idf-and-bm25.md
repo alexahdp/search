@@ -119,7 +119,7 @@ The standard "t" scheme is by far the most common.
 | **n** | $1$ | No normalization |
 | **c** | $\frac{1}{\sqrt{\sum_{t'} w_{t'}^2}}$ | Cosine normalization (unit vector) |
 | **u** | $\frac{1}{\text{unique terms in } d}$ | Pivoted unique normalization |
-| **b** | $\frac{1}{0.8 + 0.2 \cdot \frac{|d|}{\text{avg\_doc\_len}}}$ | Byte-size normalization |
+| **b** | $\frac{1}{0.8 + 0.2 \cdot \frac{|d|}{\text{avg\\_doc\\_len}}}$ | Byte-size normalization |
 
 **Why normalize?** Long documents naturally accumulate higher scores. Without normalization, a 10,000-word essay would always beat a concise 200-word answer, even if the answer is more relevant. Cosine normalization is the most common — it treats documents and queries as vectors and scores by cosine similarity.
 
@@ -141,20 +141,20 @@ BM25 (Best Match 25) is the single most widely deployed ranking function in sear
 
 ### The Formula
 
-$$\text{BM25}(q, d) = \sum_{t \in q} \text{IDF}(t) \cdot \frac{\text{TF}(t, d) \cdot (k_1 + 1)}{\text{TF}(t, d) + k_1 \cdot (1 - b + b \cdot \frac{|d|}{\text{avg\_doc\_len}})}$$
+$$\text{BM25}(q, d) = \sum_{t \in q} \text{IDF}(t) \cdot \frac{\text{TF}(t, d) \cdot (k_1 + 1)}{\text{TF}(t, d) + k_1 \cdot (1 - b + b \cdot \frac{|d|}{\text{avg\\_doc\\_len}})}$$
 
 where:
 - $\text{IDF}(t) = \log \frac{N - df(t) + 0.5}{df(t) + 0.5}$ (BM25's IDF variant)
 - $k_1$ controls term saturation (typically $1.2$ to $2.0$)
 - $b$ controls length normalization (typically $0.75$)
 - $|d|$ = document length in tokens
-- $\text{avg\_doc\_len}$ = average document length in the corpus
+- $\text{avg\\_doc\\_len}$ = average document length in the corpus
 
 ### Breaking It Down
 
 **The TF component:**
 
-$$\frac{\text{TF}(t, d) \cdot (k_1 + 1)}{\text{TF}(t, d) + k_1 \cdot (1 - b + b \cdot \frac{|d|}{\text{avg\_doc\_len}})}$$
+$$\frac{\text{TF}(t, d) \cdot (k_1 + 1)}{\text{TF}(t, d) + k_1 \cdot (1 - b + b \cdot \frac{|d|}{\text{avg\\_doc\\_len}})}$$
 
 This is a **saturation function**. As TF increases, the score increases but with diminishing returns:
 
@@ -175,11 +175,11 @@ After ~10 occurrences, additional mentions barely help. This prevents keyword st
 
 **The length normalization term:**
 
-$$1 - b + b \cdot \frac{|d|}{\text{avg\_doc\_len}}$$
+$$1 - b + b \cdot \frac{|d|}{\text{avg\\_doc\\_len}}$$
 
-- If $|d| = \text{avg\_doc\_len}$, this equals $1$ (no penalty or boost)
-- If $|d| < \text{avg\_doc\_len}$, this is $< 1$ (boosts the score — short docs are rewarded)
-- If $|d| > \text{avg\_doc\_len}$, this is $> 1$ (penalizes the score — long docs are punished)
+- If $|d| = \text{avg\\_doc\\_len}$, this equals $1$ (no penalty or boost)
+- If $|d| < \text{avg\\_doc\\_len}$, this is $< 1$ (boosts the score — short docs are rewarded)
+- If $|d| > \text{avg\\_doc\\_len}$, this is $> 1$ (penalizes the score — long docs are punished)
 
 Parameter $b$ controls how much length matters:
 - $b = 0$: no length normalization
@@ -258,13 +258,13 @@ $$\text{BM25F}(q, d) = \sum_{t \in q} \text{IDF}(t) \cdot \frac{\widetilde{\text
 
 where the **weighted term frequency** is:
 
-$$\widetilde{\text{TF}}(t, d) = \sum_{f \in \text{fields}} w_f \cdot \frac{\text{TF}(t, d_f)}{1 - b_f + b_f \cdot \frac{|d_f|}{\text{avg\_len}_f}}$$
+$$\widetilde{\text{TF}}(t, d) = \sum_{f \in \text{fields}} w_f \cdot \frac{\text{TF}(t, d_f)}{1 - b_f + b_f \cdot \frac{|d_f|}{\text{avg\\_len}_f}}$$
 
 Each field $f$ has:
 - $w_f$: field weight (boost factor)
 - $b_f$: field-specific length normalization
 - $|d_f|$: length of this field in this document
-- $\text{avg\_len}_f$: average length of field $f$ across the corpus
+- $\text{avg\\_len}_f$: average length of field $f$ across the corpus
 
 ### Practical Example
 
@@ -331,15 +331,15 @@ BM25 has a quirk: if a document is shorter than average, the length normalizatio
 
 More technically: the BM25 score contribution for a single term occurrence is:
 
-$$\frac{k_1 + 1}{k_1 \cdot (1 - b + b \cdot \frac{|d|}{\text{avg\_doc\_len}}) + 1}$$
+$$\frac{k_1 + 1}{k_1 \cdot (1 - b + b \cdot \frac{|d|}{\text{avg\\_doc\\_len}}) + 1}$$
 
-For very short documents ($|d| \ll \text{avg\_doc\_len}$), this can exceed $(k_1 + 1)$, creating an unintended boost.
+For very short documents ($|d| \ll \text{avg\\_doc\\_len}$), this can exceed $(k_1 + 1)$, creating an unintended boost.
 
 ### The BM25+ Fix
 
 BM25+ adds a **lower bound** to the TF component:
 
-$$\text{BM25+}(q, d) = \sum_{t \in q} \text{IDF}(t) \cdot \left( \delta + \frac{\text{TF}(t, d) \cdot (k_1 + 1)}{\text{TF}(t, d) + k_1 \cdot (1 - b + b \cdot \frac{|d|}{\text{avg\_doc\_len}})} \right)$$
+$$\text{BM25+}(q, d) = \sum_{t \in q} \text{IDF}(t) \cdot \left( \delta + \frac{\text{TF}(t, d) \cdot (k_1 + 1)}{\text{TF}(t, d) + k_1 \cdot (1 - b + b \cdot \frac{|d|}{\text{avg\\_doc\\_len}})} \right)$$
 
 where $\delta$ (typically $1.0$) is a constant lower bound ensuring each term match contributes at least $\delta \cdot \text{IDF}(t)$ to the score.
 
@@ -373,7 +373,7 @@ $$\text{IDF}(\text{engine}) = \log \frac{10000 - 800 + 0.5}{800 + 0.5} = \log \f
 
 **Step 2: Compute length normalization term**
 
-$$L = 1 - b + b \cdot \frac{|d|}{\text{avg\_doc\_len}} = 1 - 0.75 + 0.75 \cdot \frac{7}{200} = 0.25 + 0.026 = 0.276$$
+$$L = 1 - b + b \cdot \frac{|d|}{\text{avg\\_doc\\_len}} = 1 - 0.75 + 0.75 \cdot \frac{7}{200} = 0.25 + 0.026 = 0.276$$
 
 **Step 3: Compute TF component for each term**
 
@@ -428,7 +428,7 @@ BM25 can be partially precomputed:
 **Index-time**:
 - Document length $|d|$ (store as doc metadata)
 - Term frequencies per field (in posting lists)
-- Corpus statistics: $N$, $\text{avg\_doc\_len}$, $df(t)$ for each term
+- Corpus statistics: $N$, $\text{avg\\_doc\\_len}$, $df(t)$ for each term
 
 **Query-time**:
 - IDF computation (fast: just log + division)
@@ -438,7 +438,7 @@ BM25 can be partially precomputed:
 
 When documents are added or deleted:
 1. **$N$ changes** → all IDF values change (slightly). Most systems recompute periodically (e.g., on index segment merges) rather than per-document.
-2. **$\text{avg\_doc\_len}$ changes** → affects length normalization. Also recomputed on merges.
+2. **$\text{avg\\_doc\\_len}$ changes** → affects length normalization. Also recomputed on merges.
 3. **$df(t)$ changes** → affects IDF for terms in the new document.
 
 In practice, approximate statistics are fine. Elasticsearch recomputes on segment refresh (typically every 1 second).

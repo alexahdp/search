@@ -149,7 +149,7 @@ For small distances (<10km), treat Earth as flat:
 $$d \approx \sqrt{(\Delta x)^2 + (\Delta y)^2}$$
 
 where:
-- $\Delta x = (lon_2 - lon_1) \times \cos(\text{avg\_lat}) \times 111.32$ km/degree
+- $\Delta x = (lon_2 - lon_1) \times \cos(\text{avg\\_lat}) \times 111.32$ km/degree
 - $\Delta y = (lat_2 - lat_1) \times 110.574$ km/degree
 
 **Advantage:** Much faster than Haversine (no trigonometry).
@@ -713,7 +713,7 @@ Boost results by proximity:
 
 **Decay function:**
 
-$$\text{score} = \text{BM25\_score} \times \exp\left(-\frac{d^2}{2 \sigma^2}\right)$$
+$$\text{score} = \text{BM25\\_score} \times \exp\left(-\frac{d^2}{2 \sigma^2}\right)$$
 
 where $d$ = distance, $\sigma$ = scale parameter.
 

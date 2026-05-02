@@ -334,7 +334,7 @@ $$\text{BM25P}(q, d) = \text{BM25}(q, d) + \lambda \cdot \text{ProximityScore}(q
 
 where:
 
-$$\text{ProximityScore}(q, d) = \sum_{t_i, t_j \in q, i < j} \frac{1}{\text{min\_distance}(t_i, t_j, d)}$$
+$$\text{ProximityScore}(q, d) = \sum_{t_i, t_j \in q, i < j} \frac{1}{\text{min\\_distance}(t_i, t_j, d)}$$
 
 **Minimum distance** = smallest gap between any occurrence of $t_i$ and $t_j$ in document $d$.
 

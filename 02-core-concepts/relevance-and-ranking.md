@@ -71,7 +71,7 @@ Is the source credible? PageRank, domain authority scores, and E-E-A-T (Experien
 
 How recent is the document? For news queries, a 2-hour-old article is more relevant than yesterday's. For evergreen content ("how to tie a tie"), freshness matters less. Systems typically apply a **freshness boost** that decays over time:
 
-$$\text{freshness\_boost}(d) = e^{-\lambda \cdot \text{age}(d)}$$
+$$\text{freshness\\_boost}(d) = e^{-\lambda \cdot \text{age}(d)}$$
 
 where $\lambda$ controls the decay rate (different for different query types).
 
@@ -170,7 +170,7 @@ Low agreement tells you something important: if trained judges can't agree on re
 
 A ranking system assigns each document a **relevance score** and sorts by decreasing score. The score is typically a function of:
 
-$$\text{score}(q, d) = f(\text{text\_match}(q, d), \text{static\_quality}(d), \text{freshness}(d), \text{personalization}(q, u), \ldots)$$
+$$\text{score}(q, d) = f(\text{text\\_match}(q, d), \text{static\\_quality}(d), \text{freshness}(d), \text{personalization}(q, u), \ldots)$$
 
 where $u$ is the user context. The simplest instantiation is pure BM25 (text match only). Production systems combine dozens to hundreds of signals.
 
